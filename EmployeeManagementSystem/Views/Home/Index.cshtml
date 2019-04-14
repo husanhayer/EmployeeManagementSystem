@@ -1,0 +1,207 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<table class="table" id="tblEmployee" style="border:1px solid black;">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>FatherName</th>
+            <th>MotherName</th>
+            <th>Address</th>
+            <th>Mobile</th>
+            <th>Email</th>
+            <th>Country</th>
+            <th>State</th>
+            <th>City</th>
+            <th>Designation</th>
+            <th>Gender</th>
+        </tr>
+    </thead>
+    <tbody>
+        
+    </tbody>
+</table>
+
+
+<table class="table" id="tblEmployeeCreate" style="border:1px solid black;">
+        <tr>
+            <td>ID</td>
+            <td><input type="text" name="id" id="id" /></td>
+        </tr>
+        <tr>
+            <td>Name</td>
+            <td><input type="text" name="name" id="name" /></td>
+        </tr>
+        <tr>
+            <td>FatherName</td>
+            <td><input type="text" name="fname" id="fname" /></td>
+        </tr>
+        <tr>
+            <td>MotherName</td>
+            <td><input type="text" name="mname" id="mname" /></td>
+        </tr>
+        <tr>
+            <td>Address</td>
+            <td><input type="text" name="address" id="address" /></td>
+        </tr>
+        <tr>
+            <td>Mobile</td>
+            <td><input type="text" name="mobile" id="mobile" /></td>
+        </tr>
+        <tr>
+            <td>Email</td>
+            <td><input type="text" name="email" id="email" /></td>
+        </tr>
+        <tr>
+            <td>Country</td>
+            <td><input type="text" name="country" id="country" /></td>
+        </tr>
+        <tr>
+            <td>State</td>
+            <td><input type="text" name="state" id="state" /></td>
+        </tr>
+        <tr>
+            <td>City</td>
+            <td><input type="text" name="city" id="city" /></td>
+        </tr>
+        <tr>
+            <td>Designation</td>
+            <td><input type="text" name="designation" id="designation" /></td>
+        </tr>
+        <tr>
+            <td>Gender</td>
+            <td><input type="text" name="gender" id="gender" /></td>
+        </tr>
+        <tr>
+            <td colspan="2" style="text-align:center">
+                <button type="button" id="btnSave">Save</button>
+                <button type="button" id="btnUpdate">Update</button>
+                <button type="button" id="btnDelete">Delete</button>
+            </td>
+        </tr>
+    
+</table>
+
+
+<script src="~/Scripts/jquery-1.10.2.js"></script>
+<script>
+    $(document).ready(function () {
+        GetEmployee();
+        $('#btnSave').click(function () {
+
+        
+        var objEmpModel = {
+            Name: $('#name').val(), FatherName: $('#fname').val(),
+            MotherName: $('#mname').val(), Address: $('#address').val(),
+            Mobile: $('#mobile').val(), Email: $('#email').val(),
+            Country: $('#country').val(), State: $('#state').val(),
+            City: $('#city').val(), Designation: $('#designation').val(),
+            Gender: $('#gender').val()
+
+        }
+        $.ajax({
+                type: 'POST',
+                url: '/api/EmployeeInfoes/PostEmployeeInfo',
+                dataType: 'JSON',
+                contentType: 'application/json; charset=utf-8',
+                data: JSON.stringify(objEmpModel),
+                success: function (data) {
+                    alert("Saved Successfully");
+                    GetEmployee();
+                },
+                Error: function (error) {
+                    alert(error);
+                }
+            });
+        });
+        $("#btnDelete").click(function () {
+            var id = $("#id").val();
+
+            $.ajax({
+
+                type: "DELETE",
+
+                contentType: "application/json;charset=utf-8",
+
+                url: "/api/EmployeeInfoes/" + $("#id").val(),
+
+                data: JSON.stringify({
+
+                    name: $("#id").val(),
+
+                }),
+
+                dataType: "JSON",
+
+                success: function (data) {
+                    $("#tblEmployee").find("tr:gt(0)").remove();
+                    GetEmployee();
+                }
+            });
+
+
+        })
+
+        $("#btnUpdate").click(function () {
+            var id = $("#id").val();
+            var objEmpModel1 = {
+                Id: $("#id").val(),Name: $('#name').val(), FatherName: $('#fname').val(),
+                MotherName: $('#mname').val(), Address: $('#address').val(),
+                Mobile: $('#mobile').val(), Email: $('#email').val(),
+                Country: $('#country').val(), State: $('#state').val(),
+                City: $('#city').val(), Designation: $('#designation').val(),
+                Gender: $('#gender').val()
+
+            }
+
+            $.ajax({
+
+                type: "PUT",
+
+                contentType: "application/json;charset=utf-8",
+
+                url: "/api/EmployeeInfoes/" + $("#id").val(),
+
+                data: JSON.stringify(objEmpModel1),
+
+                dataType: "JSON",
+
+                success: function (data) {
+                    $("#tblEmployee").find("tr:gt(0)").remove();
+                    GetEmployee();
+                }
+            });
+
+
+        })
+
+    });
+
+    function GetEmployee() {
+        
+        $.ajax({
+            type: 'GET',
+            url: '/api/EmployeeInfoes',
+            dataType: 'JSON',
+            contentType: 'application/json; charset=utf-8',
+            success: function (data) {
+                //console.log(data);
+                var loadEmployee = "";
+                $("#tblEmployee").find('tr:gt(0)').remove();
+                $.each(data, function (index, item) {
+                    loadEmployee += "<tr><td>" + item.Id + "</td><td>" + item.Name + "</td><td>" + item.FatherName + "</td><td>" + item.MotherName + "</td><td>" + item.Address + "</td><td>" + item.Mobile + "</td><td>" + item.Email + "</td><td>"
+                        + item.Country + "</td><td>" + item.State + "</td><td>" + item.City + "</td><td>" + item.Designation + "</td><td>" + item.Gender + "</td><td>";
+                });
+                $("#tblEmployee").append(loadEmployee);
+            },
+            error: function (error) {
+
+            }
+        });
+    }
+</script>
